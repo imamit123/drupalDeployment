@@ -1,0 +1,1042 @@
+<?php
+/**
+ * Implements hook_install().
+ */
+function deployment_install() {
+}
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function deployment_update_dependencies() {
+  $dependencies = array();
+
+  return $dependencies;
+}
+
+
+/**
+ * Helper function to bulk enable modules.
+ *
+ * @param $modules
+ */
+function deployment_module_enable($modules) {
+  return $modules_enabled = module_enable($modules, TRUE);
+}
+
+/**
+ * Helper function to bulk uninstall modules.
+ *
+ * @param $modules
+ */
+function deployment_module_uninstall($modules) {
+  $response = module_disable($modules, true);
+  drupal_uninstall_modules($modules);
+  drupal_flush_all_caches();
+  return $response;
+}
+
+/**
+ * Helper function to bulk revert features.
+ *
+ * @param $modules
+ */
+function deployment_features_revert($features) {
+  drupal_flush_all_caches();
+  features_revert($features);
+  drupal_flush_all_caches();
+}
+
+
+/**
+ * Helper function to clear webform submissions.
+ *
+ * @param null $uuid
+ *   UUID of the webform to clear submissions for, NULL to clear all
+ *   submissions.
+ */
+// function deployment_webform_submission_clear($uuid = NULL) {
+//   $query = new EntityFieldQuery();
+//   $query->entityCondition('entity_type', 'node')
+//     ->entityCondition('bundle', 'webform');
+
+//   if ($uuid) {
+//     $query->propertyCondition('uuid', $uuid, '=');
+//   }
+
+//   $results = $query->execute();
+
+//   foreach ($results['node'] as $result) {
+//     $nid = $result->nid;
+//     db_delete('webform_submitted_data')
+//       ->condition('nid', $nid)
+//       ->execute();
+//     db_delete('webform_submissions')
+//       ->condition('nid', $nid)
+//       ->execute();
+//   }
+// }
+
+/**
+ * Helper function to disable views.
+ */
+// function deployment_disable_views($viewnames) {
+//   // grab list of views that are already disabled
+//   $views_status = variable_get('views_defaults', array());
+//   // add our views to be disabled to the list
+//   foreach ($viewnames as $key => $viewname) {
+//     $views_status[$viewname] = TRUE;
+//   }
+//   // reset the variable with the new list
+//   variable_set('views_defaults', $views_status);
+//   // empty cache now
+//   if (function_exists('views_invalidate_cache')) {
+//     views_invalidate_cache();
+//   }
+// }
+
+
+/**
+* MEMA initial module state
+*/
+function deployment_update_7101(&$sandbox) {
+  $modules = array(
+    'ctools',
+    'date_api',
+    'date',
+    'date_popup',
+    'uuid',
+    'uuid_features',
+    'views',
+    'email',
+    'field_collection',
+    'field_group',
+    'link',
+    'location',
+    'node_reference',
+    'phone',
+    'timefield',
+    'location_cck',
+    'libraries',
+    'pathauto',
+    'token',
+    'jquery_update',
+    'uuid',
+    'uuid_path',
+    'ckeditor',
+    'workbench',
+    'admin_menu',
+  );
+  $messages = array();
+  $modules_enabled = module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+
+  drupal_flush_all_caches();
+}
+
+/**
+ * Added content types and taxonomies
+ */
+function deployment_update_7103(&$sandbox) {
+  $modules = array(
+    'mema_common',
+    'global_content_type_homepage_hero',
+    'global_content_type_large_event',
+    'global_content_type_media',
+    'global_content_type_page',
+    'global_content_type_person',
+    'global_content_type_small_event',
+    'global_taxonomy_article',
+    'global_taxonomy_event',
+    'global_taxonomy_resource_topic',
+    'global_taxonomy_resource_type',
+    'global_taxonomy_topics',
+  );
+  $messages = array();
+  $modules_enabled = module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+
+  drupal_flush_all_caches();
+}
+
+/**
+ * Added division promo content type
+ */
+function deployment_update_7104(&$sandbox) {
+  $modules = array(
+    'global_content_type_division_promo',
+  );
+  $messages = array();
+  $modules_enabled = module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+
+  drupal_flush_all_caches();
+}
+
+/**
+ * Added backup and migrate module
+ */
+function deployment_update_7105(&$sandbox) {
+  $modules = array(
+    'backup_migrate',
+  );
+  $messages = array();
+  $modules_enabled = module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+
+  drupal_flush_all_caches();
+}
+
+/**
+ * Added content type for homepage background video
+ */
+function deployment_update_7106(&$sandbox) {
+  $modules = array(
+    'global_content_type_homepage_video',
+  );
+  $messages = array();
+  $modules_enabled = module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+
+  drupal_flush_all_caches();
+}
+
+/**
+ * Added feature module for webform export
+ */
+function deployment_update_7107(&$sandbox) {
+  $modules = array(
+    'webform_features',
+  );
+  $messages = array();
+  $modules_enabled = module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+
+  drupal_flush_all_caches();
+}
+
+/**
+ * Added feature module for webform export
+ */
+function deployment_update_7108(&$sandbox) {
+  $modules = array(
+    'devel_generate',
+  );
+  $messages = array();
+  $modules_enabled = module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+
+  drupal_flush_all_caches();
+}
+
+/**
+ * Added block class ,block class styles and html title module 
+ */
+function deployment_update_7109(&$sandbox) {
+  $modules = array(
+    'block_class',
+    'block_class_styles',
+    'html_title',
+  );
+  $messages = array();
+  $modules_enabled = module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+
+  drupal_flush_all_caches();
+}
+
+/**
+ * Added page title module 
+ */
+function deployment_update_7110(&$sandbox) {
+  // $modules = array(
+  //   'page_title',
+  // );
+  // $messages = array();
+  // $modules_enabled = module_enable($modules, TRUE);
+  // if($modules_enabled) {
+  //   $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  // } else {
+  //   throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  // }
+
+  // drupal_flush_all_caches();
+}
+
+/**
+ * Added feature for user roles & permissions
+ */
+function deployment_update_7111(&$sandbox) {
+  $modules = array(
+    'taxonomy_access_fix',
+    'global_user_roles_and_permissions',
+  );
+  $messages = array();
+  $modules_enabled = module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+
+  drupal_flush_all_caches();
+}
+
+/**
+ * Added initial/uninstall module node title and multiblock 
+ */
+function deployment_update_7112(&$sandbox) {
+  $modules = array(
+    'node_title_help_text',
+    'multiblock',
+  );
+  $messages = array();
+  $modules_enabled = module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  $modules_dis = array(
+    'block_class_styles',
+  );
+  deployment_module_uninstall($modules_dis, TRUE);
+  drupal_flush_all_caches();
+}
+
+/**
+ * Added feature for Background Image in Node and Listing Page
+ */
+function deployment_update_7113(&$sandbox) {
+  $modules = array(
+    'global_content_type_background_image',
+  );
+  $messages = array();
+  $modules_enabled = module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Added modules for feeds, for content migration among divisions 
+ */
+function deployment_update_7114(&$sandbox) {
+  $modules = array(
+    'job_scheduler',
+    'job_scheduler_trigger',
+    'feeds',
+    'feeds_ui',
+    'feeds_import',
+    'feeds_news',
+    'views_data_export',
+    'views_rss',
+    'views_rss_core',
+    'views_rss_dc',
+  );
+  $messages = array();
+  $modules_enabled = module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Uninstall Large and Small Event Global Feature  
+ */
+function deployment_update_7115(&$sandbox) {
+   $modules = array(
+    'global_content_type_small_event',
+    'global_content_type_large_event',
+  );
+  // $messages = array();
+   deployment_module_uninstall($modules);
+  
+  drupal_flush_all_caches();
+}
+
+/**
+ * Install bundal_copy and bulk_export module   
+ */
+function deployment_update_7116(&$sandbox) {
+    $modules = array(
+    'bulk_export',
+    'bundle_copy',
+    'date_views',
+    );
+  $messages = array();
+  $modules_enabled = module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Install views between dates filter module   
+ */
+function deployment_update_7117(&$sandbox) {
+    $modules = array(
+    'views_between_dates_filter',
+    );
+  $messages = array();
+  $modules_enabled = module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Install taxonomy member feature module   
+ */
+function deployment_update_7118(&$sandbox) {
+    $modules = array(
+    'global_taxonomy_member',
+    );
+  $messages = array();
+  $modules_enabled = module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Install nodequeue module   
+ */
+function deployment_update_7119(&$sandbox) {
+    $modules = array(
+    'nodequeue',
+    );
+  $messages = array();
+  $modules_enabled = module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Install custom search module   
+ */
+function deployment_update_7120(&$sandbox) {
+    $modules = array(
+    'custom_search',
+    );
+  $messages = array();
+  $modules_enabled = module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Added modules for workflow - workbench_moderation & workbench_access 
+ */
+function deployment_update_7121(&$sandbox) {
+  //   $modules = array(
+  //   'workbench_access',
+  //   'workbench_moderation',
+  //   );
+  // $messages = array();
+  // $modules_enabled = deployment_module_enable($modules, TRUE);
+  // if($modules_enabled) {
+  //   $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  // } else {
+  //   throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  // }
+  // drupal_flush_all_caches();
+} 
+
+/**
+ * feature for workflow settings and taxonomy
+ */
+function deployment_update_7122(&$sandbox) {
+  //   $modules = array(
+  //   'global_workflow',
+  //   'global_workflow_taxonomy',
+  //   );
+  // $messages = array();
+  // $modules_enabled = deployment_module_enable($modules, TRUE);
+  // if($modules_enabled) {
+  //   $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  // } else {
+  //   throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  // }
+  // drupal_flush_all_caches();
+}
+
+/**
+ * Install module image style admin
+ */
+function deployment_update_7123(&$sandbox) {
+  $modules = array(
+    'image_styles_admin',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * uninstall workbench
+ */
+function deployment_update_7124(&$sandbox) {
+  /*$modules = array(
+    'workbench',
+    'global_workflow',
+    'global_workflow_taxonomy',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_uninstall($modules);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled/disabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();*/
+}
+
+/**
+ * uninstall workbench access & moderation
+ */
+function deployment_update_7125(&$sandbox) {
+  /*$modules = array(
+    'workbench_access',
+    'workbench_moderation',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_uninstall($modules);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled/disabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();*/
+}
+
+/**
+ * Install module Data Export Import
+ */
+function deployment_update_7126(&$sandbox) {
+  $modules = array(
+    'data_export_import',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Install module IMCE
+ */
+function deployment_update_7127(&$sandbox) {
+  $modules = array(
+    'imce',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Enable devel module
+ */
+function deployment_update_7128(&$sandbox) {
+  $modules = array(
+    'devel',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Enable php filter module
+ */
+function deployment_update_7129(&$sandbox) {
+  $modules = array(
+    'php',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Enable Path Breadcrumbs module
+ */
+function deployment_update_7130(&$sandbox) {
+  $modules = array(
+    'path_breadcrumbs',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Enable Path Breadcrumbs UI module
+ */
+function deployment_update_7131(&$sandbox) {
+  $modules = array(
+    'path_breadcrumbs_ui',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Enable mobile detect module
+ */
+function deployment_update_7132(&$sandbox) {
+  $modules = array(
+    'mobile_detect',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Enable redirect module
+ */
+function deployment_update_7133(&$sandbox) {
+  $modules = array(
+    'redirect',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Added initial mobile_detect_variables and uninstall redirect module  
+ */
+function deployment_update_7134(&$sandbox) {
+  $modules = array(
+    'mobile_detect_variables',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  $modules_dis = array(
+    'redirect',
+  );
+  deployment_module_uninstall($modules_dis, TRUE);
+  drupal_flush_all_caches();
+}
+
+/**
+ * Added Simple hierarchical select and newsletter list feature module  
+ */
+function deployment_update_7135(&$sandbox) {
+  $modules = array(
+    'global_view_article_newsletter',
+    'shs',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Add modules for Open ID Connect to support SSO
+ */
+function deployment_update_7136(&$sandbox) {
+  $modules = array(
+    'openid_connect_sso_client',
+    'openid_connect_sso',
+    'openid_connect',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Add modules for browserclass
+ */
+function deployment_update_7137(&$sandbox) {
+  $modules = array(
+    'browserclass',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Add modules for menu_item_visibility
+ */
+function deployment_update_7138(&$sandbox) {
+  $modules = array(
+    'menu_item_visibility',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Add feature for Badge vocabulary
+ */
+function deployment_update_7139(&$sandbox) {
+  $modules = array(
+    'global_taxonomy_badge',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Add Modulefor Menu Attributes
+ */
+function deployment_update_7140(&$sandbox) {
+  $modules = array(
+    'menu_attributes',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Add modules for SSO and salesforce sync. functionality
+ */
+function deployment_update_7141(&$sandbox) {
+  $modules = array(
+    'salesforce',
+    'salesforce_mapping',
+    'salesforce_pull',
+    'salesforce_views',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Add modules for admin views and admin menu.
+ */
+function deployment_update_7142(&$sandbox) {
+  $modules = array(
+    'views_bulk_operations',
+    'admin_views',
+    'admin_menu',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Add modules for Google analytics .
+ */
+function deployment_update_7143(&$sandbox) {
+  $modules = array(
+    'google_analytics',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_enable($modules, TRUE);
+  // if($modules_enabled) {
+  //   $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  // } else {
+  //   throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  // }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Add modules for block access .
+ */
+function deployment_update_7144(&$sandbox) {
+  $modules = array(
+    'block_access',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Add modules for node publish permission .
+ */
+function deployment_update_7145(&$sandbox) {
+  $modules = array(
+    'override_node_options',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Add modules for SiteMap .
+ */
+function deployment_update_7146(&$sandbox) {
+  $modules = array(
+    'site_map',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Add modules for nodequeues for newsletter .
+ */
+function deployment_update_7147(&$sandbox) {
+  $modules = array(
+    'global_nodequeues_for_newsletter',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Add modules for flood_unblock .
+ */
+function deployment_update_7148(&$sandbox) {
+  $modules = array(
+    'flood_unblock',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Uninstall old newsletter feature views.  
+ */
+function deployment_update_7149(&$sandbox) {
+   $modules = array(
+    'global_view_article_newsletter',
+  );
+  // $messages = array();
+   deployment_module_uninstall($modules);
+  
+  drupal_flush_all_caches();
+}
+
+/**
+ * Add modules for global redirect .
+ */
+function deployment_update_7150(&$sandbox) {
+  $modules = array(
+    'globalredirect',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Add modules for path redirect import .
+ */
+function deployment_update_7151(&$sandbox) {
+  $modules = array(
+    'path_redirect_import',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
+
+/**
+ * Add modules for Add This and Feed Temper .
+ */
+function deployment_update_7152(&$sandbox) {
+  $modules = array(
+    'feeds_tamper',
+    'feeds_tamper_ui',
+    'addthis',
+    'addthis_displays',
+    'scheduler',
+  );
+  $messages = array();
+  $modules_enabled = deployment_module_enable($modules, TRUE);
+  if($modules_enabled) {
+    $messages[] = implode(", ", $modules) . t(' modules have all been enabled.');
+  } else {
+    throw new DrupalUpdateException('Something went wrong; A dependency was missing.');
+  }
+  drupal_flush_all_caches();
+}
